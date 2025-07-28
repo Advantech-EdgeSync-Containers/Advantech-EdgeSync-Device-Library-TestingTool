@@ -11,10 +11,59 @@ TODO: Guide users through getting your code up and running on their own system. 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+# Mount Files
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## SUSI
+
+### Architecture : x86
+
+```
+/opt/Advantech/
+/etc/Advantech/
+/usr/lib/Advantech/
+/usr/lib/x86_64-linux-gnu/
+/usr/lib/libSUSI-4.00.so
+/usr/lib/libSUSI-4.00.so.1
+/usr/lib/libSUSI-3.02.so
+/usr/lib/libSUSI-3.02.so.1
+/usr/lib/libSusiIoT.so
+/usr/lib/libSusiIoT.so.1.0.0
+/usr/lib/libjansson.so
+/usr/lib/libjansson.so.4
+/usr/lib/libSUSIDevice.so
+/usr/lib/libSUSIDevice.so.1
+/usr/lib/libSUSIAI.so
+/usr/lib/libSUSIAI.so.1
+/usr/lib/libEApi.so
+/usr/lib/libEApi.so.1
+```
+
+### Architecture : ARM
+
+```
+/etc/board
+/usr/lib/Advantech/
+/usr/lib/aarch64-linux-gnu
+/lib/libSUSI-4.00.so
+/lib/libSUSI-4.00.so.1
+/lib/libSUSI-4.00.so.1.0.0
+/lib/libjansson.a
+/lib/libjansson.so
+/lib/libjansson.so.4
+/lib/libjansson.so.4.11.0
+/lib/libSusiIoT.so
+/lib/libSusiIoT.so.1.0.0
+```
+
+## PlatformSDK
+
+```
+/usr/src/advantech
+/usr/lib/libATAuxIO.so
+/usr/lib/libATGPIO.so
+/usr/lib/libBoardResource.so
+/usr/lib/libEAPI-IPS.so
+/usr/lib/libEAPI.so
+/usr/lib/libECGPIO.so
+/usr/lib/libATSMBUS.so
+```

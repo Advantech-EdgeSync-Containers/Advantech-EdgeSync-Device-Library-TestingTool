@@ -1,0 +1,20 @@
+version: '2.4'
+
+services:
+  device_library_test:
+    image: device_library_test:latest
+    container_name: device_library_test
+    privileged: true
+    stdin_open: true
+    tty: true
+    restart: "no"
+    volumes:
+      - ./reports/:/reports/
+      - /usr/src/advantech:/usr/src/advantech:ro
+      - /usr/lib/libATAuxIO.so:/usr/lib/libATAuxIO.so:ro
+      - /usr/lib/libATGPIO.so:/usr/lib/libATGPIO.so:ro
+      - /usr/lib/libBoardResource.so:/usr/lib/libBoardResource.so:ro
+      - /usr/lib/libEAPI-IPS.so:/usr/lib/libEAPI-IPS.so:ro
+      - /usr/lib/libEAPI.so:/usr/lib/libEAPI.so:ro
+      - /usr/lib/libECGPIO.so:/usr/lib/libECGPIO.so:ro
+      - /usr/lib/libATSMBUS.so:/usr/lib/libATSMBUS.so:ro
