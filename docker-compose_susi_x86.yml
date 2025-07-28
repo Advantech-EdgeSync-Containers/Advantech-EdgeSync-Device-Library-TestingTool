@@ -1,0 +1,29 @@
+version: '2.4'
+
+services:
+  device_library_test:
+    image: device_library_test:latest
+    container_name: device_library_test
+    privileged: true
+    stdin_open: true
+    tty: true
+    restart: "no"
+    volumes:
+      - ./reports/:/reports/
+      - /opt/Advantech/susi/service/:/opt/Advantech/susi/service/:ro
+      - /etc/Advantech/susi/service/:/etc/Advantech/susi/service/:ro      
+      - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/
+      - /usr/lib/libjansson.so.4:/usr/lib/libjansson.so.4:ro
+      - /usr/lib/libjansson.so:/usr/lib/libjansson.so:ro
+      - /usr/lib/libSusiIoT.so:/usr/lib/libSusiIoT.so:ro
+      - /usr/lib/libSUSIDevice.so.1:/usr/lib/libSUSIDevice.so.1:ro
+      - /usr/lib/libSUSIDevice.so:/usr/lib/libSUSIDevice.so:ro
+      - /usr/lib/libSUSIAI.so.1:/usr/lib/libSUSIAI.so.1:ro
+      - /usr/lib/libSUSIAI.so:/usr/lib/libSUSIAI.so:ro
+      - /usr/lib/libSUSI-4.00.so.1:/usr/lib/libSUSI-4.00.so.1:ro
+      - /usr/lib/libSUSI-4.00.so:/usr/lib/libSUSI-4.00.so:ro
+      - /usr/lib/libSUSI-3.02.so.1:/usr/lib/libSUSI-3.02.so.1:ro
+      - /usr/lib/libSUSI-3.02.so:/usr/lib/libSUSI-3.02.so:ro
+      - /usr/lib/libEApi.so.1:/usr/lib/libEApi.so.1:ro
+      - /usr/lib/libEApi.so:/usr/lib/libEApi.so:ro
+      - /usr/lib/Advantech:/usr/lib/Advantech:ro

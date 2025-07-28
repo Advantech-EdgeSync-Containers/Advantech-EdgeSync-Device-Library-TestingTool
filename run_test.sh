@@ -1,10 +1,13 @@
 #!/bin/bash
 # ==========================================================
-# Advantech EBO - Host Dependencies Test Tool
+# Advantech EBO - Device Library In-Container Test Tool
 # ==========================================================
 # Created and maintained by Vincent Hung <Vincent.Hung@advantech.com.tw>
 
 #################################################################
+
+# host_dependency_check_str=$(./host_dependency_check.sh)
+# host_dependency_check_result=$?
 
 # --- Color Definitions ---
 GREEN='\033[0;32m'
@@ -17,6 +20,8 @@ BOLD='\033[1m'
 UNDERLINE='\033[4m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
+
+#################################################################
 
 # --- Helper Functions ---
 
@@ -40,22 +45,49 @@ print_error() {
     echo -e "${RED}✗ $1${NC}"
 }
 
+log_info() {
+    echo ""
+    # mkdir -p ./log
+    # echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> ./log/host_dependency_check_output
+}
+
 resolve_link() {
-    local target="$1"
+
+    local TARGET="$1"
 
     # If it is a symbolic link, keep resolving it until the actual file is found.
-    while [ -L "$target" ]; do
-        target="$(readlink -f "$target")"
+    while [ -L "$TARGET" ]; do
+        TARGET="$(readlink -f "$TARGET")"
     done
 
     # Finally, perform a final check to confirm that it is a existing file or directory.
-    if [ -e "$target" ]; then
-        echo "$target"
+    if [ -e "$TARGET" ]; then
+        echo "$TARGET"
         return 0
     else
         return 1
     fi
 }
+
+check_image_locally() {
+
+    local IMAGE_NAME="$1"
+
+    # Check if the image tag is provided
+    if [[ -z "$IMAGE_NAME" ]]; then
+        echo "Please provide an image name and tag, e.g., nginx:latest"
+        return 2
+    fi
+
+    # Use docker inspect to check if the image exists locally
+    if docker image inspect "$IMAGE_NAME" > /dev/null 2>&1; then
+        return 0  # Image exists
+    else
+        return 1  # Image does not exist
+    fi
+}
+
+#################################################################
 
 # --- Hardware API Verification Functions ---
 
@@ -222,17 +254,72 @@ output_verify_result() {
 
     print_header "Verification Result"
 
-    if [ $verify_install_susi_result -eq 0 ]; then
+    if [ $SUSI_INSTALL_RESULT -eq 0 ]; then
         print_success "SUSI is installed."
+        log_info "SUSI is installed."
     else
         print_error "SUSI is not installed."
+        log_info "SUSI is not installed."
     fi
 
-    if [ $verify_install_platformsdk_result -eq 0 ]; then
+    if [ $PLATFORMSDK_INSTALL_RESULT -eq 0 ]; then
         print_success "PlatformSDK is installed."
+        log_info "PlatformSDK is installed."
     else
         print_error "PlatformSDK is not installed."
+        log_info "PlatformSDK is not installed."
     fi
+}
+
+run_test_image() {
+
+    print_header "Running Test Container"
+
+    echo ""
+
+    local CONTAINER_NAME=$1
+
+    # Get machine architecture 
+    local arch=$(uname -m)
+
+    # Run docker compose according to installed Advantech API and machine architecture.
+    local FILE_PATH=""
+    if [[ $SUSI_INSTALL_RESULT -eq 0 ]]; then
+
+        if [[ "$arch" == "x86_64" ]]; then
+
+            FILE_PATH="./docker-compose_susi_x86.yml"
+
+        elif [[ "$arch" == "aarch64" ]]; then
+
+            FILE_PATH="./docker-compose_susi_arm.yml"
+
+        else
+
+            echo "Unknown architecture : $arch"
+            return 1
+
+        fi
+
+    elif [[ $PLATFORMSDK_INSTALL_RESULT -eq 0 ]]; then
+
+        FILE_PATH="./docker-compose_platformsdk.yml"
+
+    else
+
+        echo "Advantech API not installed"
+        return 1
+
+    fi
+
+    print_info "Run docker-compose file : $FILE_PATH"
+
+    # Run container via docker-compose.
+    docker-compose -f $FILE_PATH run --rm device_library_test
+
+    print_info "Run container done"
+
+    echo ""
 }
 
 #################################################################
@@ -245,11 +332,14 @@ verify_platform_info
 
 # Check SUSI
 verify_install_susi
-verify_install_susi_result=$?
+SUSI_INSTALL_RESULT=$?
 
 # Check PlatformSDK
 verify_install_platformsdk
-verify_install_platformsdk_result=$?
+PLATFORMSDK_INSTALL_RESULT=$?
 
 # Output verify result
 output_verify_result
+
+# Run test image
+run_test_image
