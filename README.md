@@ -4,7 +4,7 @@
 This tool is designed to verify the core functionality of the Device Library, covering both Python and C# implementations. The tested features include:
 - Platform Information (Motherboard name, DMI info, etc.)
 - Onboard Sensors (Temperature, Voltage, Fan speed)
-- GPIO
+- GPIO (Get/Set direction, Get/Set level)
 
 # Getting Started
 Run script :
