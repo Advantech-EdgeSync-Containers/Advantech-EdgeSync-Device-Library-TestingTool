@@ -1,14 +1,18 @@
+# Advantech-EdgeSync-Device-Library-TestingTool
+
 # Introduction 
 This tool is designed to verify the core functionality of the Device Library, covering both Python and C# implementations. The tested features include:
 - Platform Information (Motherboard name, DMI info, etc.)
 - Onboard Sensors (Temperature, Voltage, Fan speed)
 - GPIO
 
-# Run Test
+# Getting Started
 Run script :
 ```
 ./run_test.sh
 ```
+
+# Build and Test
 
 # Mount Files
 
