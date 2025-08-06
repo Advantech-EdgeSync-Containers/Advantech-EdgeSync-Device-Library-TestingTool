@@ -4,13 +4,11 @@ This tool is designed to verify the core functionality of the Device Library, co
 - Onboard Sensors (Temperature, Voltage, Fan speed)
 - GPIO
 
-# Getting Started
+# Run Test
 Run script :
 ```
 ./run_test.sh
 ```
-
-# Build and Test
 
 # Mount Files
 
