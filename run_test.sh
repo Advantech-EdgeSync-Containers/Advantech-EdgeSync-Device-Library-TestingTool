@@ -315,6 +315,7 @@ run_test_image() {
     print_info "Run docker-compose file : $FILE_PATH"
 
     # Run container via docker-compose.
+    TEST_IMAGE_NAME=harbor.edgesync.cloud/edgesync-container/device_library_test:ARM64-Ubuntu2204-0.0.0 \
     docker-compose -f $FILE_PATH run --rm device_library_test
 
     print_info "Run container done"
