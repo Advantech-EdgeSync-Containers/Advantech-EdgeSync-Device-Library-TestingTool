@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
   device_library_test:
-    image: ${TEST_IMAGE_NAME}
+    image: ${IMAGE}
     container_name: device_library_test
     privileged: true
     stdin_open: true
