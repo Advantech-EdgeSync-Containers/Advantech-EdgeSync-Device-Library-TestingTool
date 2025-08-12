@@ -75,7 +75,7 @@ check_image_locally() {
 
     # Check if the image tag is provided
     if [[ -z "$IMAGE_NAME" ]]; then
-        echo "Please provide an image name and tag, e.g., nginx:latest"
+        print_error "Please provide an image name and tag."
         return 2
     fi
 
@@ -153,7 +153,7 @@ verify_install_susi() {
 
     else
 
-        echo "Unknown architecture : $arch"
+        print_error "Unknown architecture : $arch"
         return 1
 
     fi
@@ -216,7 +216,7 @@ verify_install_platformsdk() {
 
     else
 
-        echo "Unknown architecture : $arch"
+        print_error "Unknown architecture : $arch"
         return 1
 
     fi
@@ -275,8 +275,6 @@ run_test_image() {
 
     print_header "Running Test Container"
 
-    echo ""
-
     local CONTAINER_NAME=$1
 
     # Get machine architecture 
@@ -296,7 +294,7 @@ run_test_image() {
 
         else
 
-            echo "Unknown architecture : $arch"
+            print_error "Unknown architecture : $arch"
             return 1
 
         fi
@@ -307,19 +305,15 @@ run_test_image() {
 
     else
 
-        echo "Advantech API not installed"
+        print_error "Test fail : Advantech API not installed"
         return 1
 
     fi
 
-    print_info "Run docker-compose file : $FILE_PATH"
-
     # Run container via docker-compose.
+    print_info "Run docker-compose file : $FILE_PATH"
     docker-compose -f $FILE_PATH run --rm device_library_test
-
     print_info "Run container done"
-
-    echo ""
 }
 
 #################################################################
