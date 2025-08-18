@@ -1,72 +1,138 @@
 # Advantech-EdgeSync-Device-Library-TestingTool
 
-# Introduction 
-This tool is designed to verify the core functionality of the Device Library, covering both Python and C# implementations. The tested features include:
+# Purpose
+This document provides guidelines for test engineers to execute and manage tests for the `Device Library`. It covers Docker-based testing environments to ensure consistency and reliability across platforms. The tested features include:
 - Platform Information (Motherboard name, DMI info, etc.)
 - Onboard Sensors (Temperature, Voltage, Fan speed)
 - GPIO (Get/Set direction, Get/Set level)
 
-# Getting Started
-Run script :
+# Overview
+- **Library Name**: `Device Library`
+- **Implementation**：C# / Python
+- **Unit Test Frameworks**：
+  - C#：`xUnit`
+  - Python：`unittest`
+- **Test Types**:
+    *   Unit Tests
+    *   Integration Tests
+    *   Containerized Tests (Docker)
+
+# Environment Requirements
+## Host Environment
+
+- Operating System : Linux
+
+## Docker Environment
+
+- Docker Engine : v20.10.x or later
+- docker-compose : v1.28.x or later
+
+# Prerequisites
+- Install SUSI or PlatformSDK on host device.
+  - For EIoT products : [SUSI API](https://github.com/ADVANTECH-Corp/SUSI)
+  - For IIoT products : [PlatformSDK (EAPI)](https://www.advantech.com/zh-tw/support/details/%E8%BB%9F%E9%AB%94-api?id=1-1W0B5BW)
+- Install Docker & docker-compose on host device.
+
+```bash
+# Remove old version
+sudo apt remove docker docker-engine docker.io containerd runc
+
+# Install essential packages
+sudo apt update
+sudo apt install \
+     ca-certificates \
+     curl \
+     gnupg \
+     lsb-release
+
+# Add Docker official GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+    sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Add package source of Docker
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Update package index and install Docker Engine
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io
+
+# Make current user be able to run Docker without sudo
+sudo usermod -aG docker $USER
+newgrp docker
+
+# Verify installation of Docker
+docker version
+
+# Download latest version of docker-compose and change its permission.
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Verify installation of docker-compose
+docker-compose version
+
 ```
+
+- Create Github account & assign account roles in project **[Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool)**.
+
+  - Request the repo administrator to assign access permissions for pulling repo.
+
+- Create Harbor account & assign account roles in project **edgesync-container**.
+
+  - Create [Harbor](https://harbor.edgesync.cloud/) account
+
+    ![register_harbor_account.png](./images/register_harbor_account.png)
+
+  - Request the project administrator to assign appropriate permissions and verify that the access level for the **edgesync-container** project is set above 'Guest'.
+    
+    ![harbor_project.png](./images/harbor_project.png)
+
+    ![harbor_project_member.png](./images/harbor_project_member.png)
+
+# Testing Workflow
+
+## Docker-Based Testing
+
+### Step 1 : Login Harbor
+```bash
+docker login harbor.edgesync.cloud
+```
+
+### Step 2 : Run test script
+```bash
+git clone https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool
+cd Advantech-EdgeSync-Device-Library-TestingTool
 ./run_test.sh
 ```
 
-# Build and Test
+# Test Reports & Output
 
-# Mount Files
+- After running the script `run_test.sh`, test reports for each programming language implementation of the Device Library will be generated.
+  
+  ![test_reports.png](./images/test_reports.png)
 
-## SUSI
+- Each file content in the test report is summarized below：
 
-### Architecture : x86
+  - **edgesync_device_lib_test_{device_model}.log** : System information of device.
 
-```
-/opt/Advantech/
-/etc/Advantech/
-/usr/lib/Advantech/
-/usr/lib/x86_64-linux-gnu/
-/usr/lib/libSUSI-4.00.so
-/usr/lib/libSUSI-4.00.so.1
-/usr/lib/libSUSI-3.02.so
-/usr/lib/libSUSI-3.02.so.1
-/usr/lib/libSusiIoT.so
-/usr/lib/libSusiIoT.so.1.0.0
-/usr/lib/libjansson.so
-/usr/lib/libjansson.so.4
-/usr/lib/libSUSIDevice.so
-/usr/lib/libSUSIDevice.so.1
-/usr/lib/libSUSIAI.so
-/usr/lib/libSUSIAI.so.1
-/usr/lib/libEApi.so
-/usr/lib/libEApi.so.1
-```
+    | Item            | Description       |
+    |--------------------|------------|
+    | Motherboard Name   | Model name of motherboard ( Ex : EPC-R7300 )  |
+    | SUSI Version       | Library version of SUSI  |
+  - **edgesync_device_lib_test_summary_{device_model}_{test_date}.csv** : Result summary generated by test tool running on device.
+  - **edgesync_device_lib_test_{device_model}_{test_date}.csv** : Detailed result generated by test tool running on device for each test items.
 
-### Architecture : ARM
+# Troubleshooting
 
-```
-/etc/board
-/usr/lib/Advantech/
-/usr/lib/aarch64-linux-gnu
-/lib/libSUSI-4.00.so
-/lib/libSUSI-4.00.so.1
-/lib/libSUSI-4.00.so.1.0.0
-/lib/libjansson.a
-/lib/libjansson.so
-/lib/libjansson.so.4
-/lib/libjansson.so.4.11.0
-/lib/libSusiIoT.so
-/lib/libSusiIoT.so.1.0.0
-```
+| Issue Description                  | Possible Cause                     | Solution                                           | Notes                          |
+|-----------------------------------|------------------------------------|----------------------------------------------------|--------------------------------|
+| Error message : **Test fail : Advantech API not installed**             | Not installed SUSI API or PlatformSDK yet.                 | Install SUSI API or PlatformSDK before running script. |      |
+| Error message : **unauthorized to access repository**         | Not logged in to Harbor yet.       | Login to Harbor before running script.                     | Confirm that the account is granted **Guest** or higher access rights. |
 
-## PlatformSDK
+# Appendix
 
-```
-/usr/src/advantech
-/usr/lib/libATAuxIO.so
-/usr/lib/libATGPIO.so
-/usr/lib/libBoardResource.so
-/usr/lib/libEAPI-IPS.so
-/usr/lib/libEAPI.so
-/usr/lib/libECGPIO.so
-/usr/lib/libATSMBUS.so
-```
+[Github - Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool)
