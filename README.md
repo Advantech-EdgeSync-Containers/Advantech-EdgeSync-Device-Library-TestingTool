@@ -68,9 +68,13 @@ newgrp docker
 # Verify installation of Docker
 docker version
 
-# Download latest version of docker-compose and change its permission.
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+# Download docker-compose version 2.39.2 and change its permission.
+ARCH=$(uname -m)
+OS=$(uname -s)
+DOCKER_COMPOSE_VERSION=v2.39.2
+curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-${OS}-${ARCH}" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 # Verify installation of docker-compose
 docker-compose version
