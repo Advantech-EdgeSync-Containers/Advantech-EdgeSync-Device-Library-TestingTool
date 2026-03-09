@@ -81,7 +81,7 @@ docker-compose version
 
 ```
 
-- Create Github account & assign account roles in project **[Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool)**.
+- Create Github account & assign account roles in project **[Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-Containers/Advantech-EdgeSync-Device-Library-TestingTool)**.
 
   - Request the repo administrator to assign access permissions for pulling repo.
 
@@ -139,4 +139,5 @@ cd Advantech-EdgeSync-Device-Library-TestingTool
 
 # Appendix
 
-[Github - Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool)
+
+[Github - Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-Containers/Advantech-EdgeSync-Device-Library-TestingTool)
