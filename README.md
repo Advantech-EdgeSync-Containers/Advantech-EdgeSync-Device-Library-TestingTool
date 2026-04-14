@@ -5,16 +5,15 @@ This document provides guidelines for test engineers to execute and manage tests
 - Platform Information (Motherboard name, DMI info, etc.)
 - Onboard Sensors (Temperature, Voltage, Fan speed)
 - GPIO (Get/Set direction, Get/Set level)
+- Watchdog (Configuration, Start/Stop watchdog)
+- Thermal Protection (Configuration, Enable/Disable thermal protection for each thermal zone)
+- Data Acquisition integrated with DAQNavi (Analog input/output)
+- Data Acquisition integrated with DAQNavi (Digital input/output)
 
 # Overview
 - **Library Name**: `Device Library`
-- **Implementation**：C# / Python
-- **Unit Test Frameworks**：
-  - C#：`xUnit`
-  - Python：`unittest`
+- **Implementation**：C#
 - **Test Types**:
-    *   Unit Tests
-    *   Integration Tests
     *   Containerized Tests (Docker)
 
 # Environment Requirements
@@ -25,7 +24,6 @@ This document provides guidelines for test engineers to execute and manage tests
 ## Docker Environment
 
 - Docker Engine : v20.10.x or later
-- docker-compose : v1.28.x or later
 
 # Prerequisites
 - Install SUSI or PlatformSDK on host device.
@@ -81,9 +79,24 @@ docker-compose version
 
 ```
 
-- Create Github account & assign account roles in project **[Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool)**.
+- Create Github account & assign account roles in project **[Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-Containers/Advantech-EdgeSync-Device-Library-TestingTool)**.
 
   - Request the repo administrator to assign access permissions for pulling repo.
+
+- Prepare Azure DevOps PAT (Personal Access Token) for authenticated package/feed access.
+
+  - Create an Azure DevOps PAT with the minimum required scope for your test flow.
+  - Keep the PAT private and rotate it based on your organization policy.
+
+- Edit `.env` in project root and set Azure DevOps PAT in `AZDO_PAT`.
+
+```bash
+vi .env
+# Update this line:
+AZDO_PAT=your_azure_devops_pat
+```
+
+  - Ensure `.env` is not committed to source control.
 
 - Create Harbor account & assign account roles in project **edgesync-container**.
 
@@ -107,6 +120,9 @@ docker login harbor.edgesync.cloud
 ```
 
 ### Step 2 : Run test script
+
+Before running the script, ensure `.env` is updated and `AZDO_PAT` is configured.
+
 ```bash
 git clone https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool
 cd Advantech-EdgeSync-Device-Library-TestingTool
@@ -139,4 +155,5 @@ cd Advantech-EdgeSync-Device-Library-TestingTool
 
 # Appendix
 
-[Github - Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool)
+
+[Github - Advantech-EdgeSync-Device-Library-TestingTool](https://github.com/Advantech-Containers/Advantech-EdgeSync-Device-Library-TestingTool)

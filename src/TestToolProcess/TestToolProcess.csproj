@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <!-- NuGet Package Dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Advantech.Edge" Version="2.0.2-rc5" />
+  </ItemGroup>
+
+  <!-- Test Project Configuration -->
+  <PropertyGroup>
+    <!-- Output directory for test reports -->
+    <ReportPath>./log</ReportPath>
+  </PropertyGroup>
+
+</Project>
