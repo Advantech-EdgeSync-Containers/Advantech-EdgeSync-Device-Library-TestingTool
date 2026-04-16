@@ -29,6 +29,9 @@ This document provides guidelines for test engineers to execute and manage tests
 - Install SUSI or PlatformSDK on host device.
   - For EIoT products : [SUSI API](https://github.com/ADVANTECH-Corp/SUSI)
   - For IIoT products : [PlatformSDK (EAPI)](https://www.advantech.com/zh-tw/support/details/%E8%BB%9F%E9%AB%94-api?id=1-1W0B5BW)
+- Optional: Install DAQNavi on host device for testing data acquisition features.
+  - For **x86/x64 platform** : [XNavi – The installation tool for DAQNavi/SDK](https://www.advantech.com/zh-tw/support/details/%E9%A9%85%E5%8B%95%E7%A8%8B%E5%BC%8F?id=1-1YPCECD)
+  - For **ARM platform** : Please contact Advantech support for DAQNavi installation package for ARM platform.
 - Install Docker & docker-compose on host device.
 
 ```bash

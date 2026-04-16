@@ -1,2 +1,3 @@
+*.sln
 reports/
 tool_level_local_nuget_source/
