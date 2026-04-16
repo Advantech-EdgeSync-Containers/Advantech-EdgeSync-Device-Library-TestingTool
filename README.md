@@ -5,16 +5,15 @@ This document provides guidelines for test engineers to execute and manage tests
 - Platform Information (Motherboard name, DMI info, etc.)
 - Onboard Sensors (Temperature, Voltage, Fan speed)
 - GPIO (Get/Set direction, Get/Set level)
+- Watchdog (Configuration, Start/Stop watchdog)
+- Thermal Protection (Configuration, Enable/Disable thermal protection for each thermal zone)
+- Data Acquisition integrated with DAQNavi (Analog input/output)
+- Data Acquisition integrated with DAQNavi (Digital input/output)
 
 # Overview
 - **Library Name**: `Device Library`
-- **Implementation**：C# / Python
-- **Unit Test Frameworks**：
-  - C#：`xUnit`
-  - Python：`unittest`
+- **Implementation**：C#
 - **Test Types**:
-    *   Unit Tests
-    *   Integration Tests
     *   Containerized Tests (Docker)
 
 # Environment Requirements
@@ -25,12 +24,14 @@ This document provides guidelines for test engineers to execute and manage tests
 ## Docker Environment
 
 - Docker Engine : v20.10.x or later
-- docker-compose : v1.28.x or later
 
 # Prerequisites
 - Install SUSI or PlatformSDK on host device.
   - For EIoT products : [SUSI API](https://github.com/ADVANTECH-Corp/SUSI)
   - For IIoT products : [PlatformSDK (EAPI)](https://www.advantech.com/zh-tw/support/details/%E8%BB%9F%E9%AB%94-api?id=1-1W0B5BW)
+- Optional: Install DAQNavi on host device for testing data acquisition features.
+  - For **x86/x64 platform** : [XNavi – The installation tool for DAQNavi/SDK](https://www.advantech.com/zh-tw/support/details/%E9%A9%85%E5%8B%95%E7%A8%8B%E5%BC%8F?id=1-1YPCECD)
+  - For **ARM platform** : Please contact Advantech support for DAQNavi installation package for ARM platform.
 - Install Docker & docker-compose on host device.
 
 ```bash
@@ -85,6 +86,27 @@ docker-compose version
 
   - Request the repo administrator to assign access permissions for pulling repo.
 
+- Prepare Azure DevOps PAT (Personal Access Token) for authenticated package/feed access.
+
+  - Create an Azure DevOps PAT with the minimum required scope for your test flow.
+  - Keep the PAT private and rotate it based on your organization policy.
+
+- Edit `.env` in project root and set required environment variables.
+
+```bash
+vi .env
+# Update these lines:
+AZDO_PAT=your_azure_devops_pat
+NUGET_PKG_TO_BE_TESTED=2.*.*
+```
+
+  - `AZDO_PAT`: Azure DevOps PAT for authenticated package/feed access.
+  - `NUGET_PKG_TO_BE_TESTED`: NuGet package version to test.
+    - Floating examples: `2.0.*`, `2.*.*`, `*.*.*`
+    - Fixed version example: `2.0.2-rc0`
+
+  - Ensure `.env` is not committed to source control.
+
 - Create Harbor account & assign account roles in project **edgesync-container**.
 
   - Create [Harbor](https://harbor.edgesync.cloud/) account
@@ -107,10 +129,30 @@ docker login harbor.edgesync.cloud
 ```
 
 ### Step 2 : Run test script
+
+Before running the script, ensure `.env` is updated and both `AZDO_PAT` and `NUGET_PKG_TO_BE_TESTED` are configured.
+
+- Recommended version strategy:
+  - Use floating version (for example `2.*.*`) for daily validation on latest package.
+  - Use fixed version (for example `2.0.2-rc0`) for reproducible verification and issue debugging.
+
 ```bash
 git clone https://github.com/Advantech-EdgeSync-Containers/Advantech-EdgeSync-Device-Library-TestingTool
 cd Advantech-EdgeSync-Device-Library-TestingTool
 ./run_test.sh
+```
+
+Common `.env` examples:
+
+```dotenv
+# 1) Latest patch release under 2.0
+NUGET_PKG_TO_BE_TESTED=2.0.*
+
+# 2) Latest release under major version 2
+NUGET_PKG_TO_BE_TESTED=2.*.*
+
+# 3) Pin exact version for reproducibility
+NUGET_PKG_TO_BE_TESTED=2.0.2-rc0
 ```
 
 # Test Reports & Output
@@ -136,6 +178,7 @@ cd Advantech-EdgeSync-Device-Library-TestingTool
 |-----------------------------------|------------------------------------|----------------------------------------------------|--------------------------------|
 | Error message : **Test fail : Advantech API not installed**             | Not installed SUSI API or PlatformSDK yet.                 | Install SUSI API or PlatformSDK before running script. |      |
 | Error message : **unauthorized to access repository**         | Not logged in to Harbor yet.       | Login to Harbor before running script.                     | Confirm that the account is granted **Guest** or higher access rights. |
+| Error message : **Unable to find package version** or unexpected package version is used | `NUGET_PKG_TO_BE_TESTED` is invalid, too broad, or not aligned with feed content | Update `NUGET_PKG_TO_BE_TESTED` in `.env` (for example `2.0.*`, `2.*.*`, or exact `2.0.2-rc0`) and rerun test script | Prefer exact version when reproducing issues |
 
 # Appendix
 

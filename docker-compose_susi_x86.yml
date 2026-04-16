@@ -1,5 +1,3 @@
-version: '2.4'
-
 services:
   device_library_test:
     image: ${IMAGE}
@@ -8,13 +6,46 @@ services:
     stdin_open: true
     tty: true
     restart: "no"
+    command: ["/app/container-run_test.sh"]
+    environment:
+      - AZDO_PAT=${AZDO_PAT}
+      - AZDO_ARTIFACTS_FEED_NAME=${AZDO_ARTIFACTS_FEED_NAME}
+      - AZDO_ARTIFACTS_FEED_URL=${AZDO_ARTIFACTS_FEED_URL}
+      - AZDO_ARTIFACTS_FEED_NUGET_SOURCE_URL=${AZDO_ARTIFACTS_FEED_NUGET_SOURCE_URL}
+      - NUGET_PKG_TO_BE_TESTED=${NUGET_PKG_TO_BE_TESTED}
+      - USE_LOCAL_NUGET_SOURCE=${USE_LOCAL_NUGET_SOURCE}
+      - NUGET_PKG_RESOLVED_BY_LOCAL_SOURCE=${NUGET_PKG_RESOLVED_BY_LOCAL_SOURCE}
+      - NUGET_PKG_PATH_RESOLVED_BY_LOCAL_SOURCE=${NUGET_PKG_PATH_RESOLVED_BY_LOCAL_SOURCE}
+      - BYPASS_ADVANCED_TEST=${BYPASS_ADVANCED_TEST}
     volumes:
+      # ==================
+      # Test Reports & Source Code
+      # ==================
       - ./reports/:/reports/
+      - ./src/TestToolProcess:/app/TestToolProcess
+      - ./src/container-run_test.sh:/app/container-run_test.sh
+
+      # ==================
+      # Platform Resources
+      # ==================
       - /opt/Advantech/susi/service/:/opt/Advantech/susi/service/:ro
-      - /etc/Advantech/susi/service/:/etc/Advantech/susi/service/:ro      
+      - /etc/Advantech/susi/service/:/etc/Advantech/susi/service/:ro
+      - /usr/lib/Advantech:/usr/lib/Advantech:ro
+
+      # ==================
+      # System & Transitive Dependencies
+      # ==================
       - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/
+
+      # ==================
+      # JSON Support Libraries
+      # ==================
       - /usr/lib/libjansson.so.4:/usr/lib/libjansson.so.4:ro
       - /usr/lib/libjansson.so:/usr/lib/libjansson.so:ro
+
+      # ==================
+      # Susi Libraries (x86 SUSI SDK)
+      # ==================
       - /usr/lib/libSusiIoT.so:/usr/lib/libSusiIoT.so:ro
       - /usr/lib/libSUSIDevice.so.1:/usr/lib/libSUSIDevice.so.1:ro
       - /usr/lib/libSUSIDevice.so:/usr/lib/libSUSIDevice.so:ro
@@ -24,6 +55,9 @@ services:
       - /usr/lib/libSUSI-4.00.so:/usr/lib/libSUSI-4.00.so:ro
       - /usr/lib/libSUSI-3.02.so.1:/usr/lib/libSUSI-3.02.so.1:ro
       - /usr/lib/libSUSI-3.02.so:/usr/lib/libSUSI-3.02.so:ro
+
+      # ==================
+      # EApi Libraries
+      # ==================
       - /usr/lib/libEApi.so.1:/usr/lib/libEApi.so.1:ro
       - /usr/lib/libEApi.so:/usr/lib/libEApi.so:ro
-      - /usr/lib/Advantech:/usr/lib/Advantech:ro

@@ -1,5 +1,3 @@
-version: '2.4'
-
 services:
   device_library_test:
     image: ${IMAGE}
@@ -8,16 +6,44 @@ services:
     stdin_open: true
     tty: true
     restart: "no"
+    command: ["/app/container-run_test.sh"]
+    environment:
+      - AZDO_PAT=${AZDO_PAT}
+      - AZDO_ARTIFACTS_FEED_NAME=${AZDO_ARTIFACTS_FEED_NAME}
+      - AZDO_ARTIFACTS_FEED_URL=${AZDO_ARTIFACTS_FEED_URL}
+      - AZDO_ARTIFACTS_FEED_NUGET_SOURCE_URL=${AZDO_ARTIFACTS_FEED_NUGET_SOURCE_URL}
+      - NUGET_PKG_TO_BE_TESTED=${NUGET_PKG_TO_BE_TESTED}
+      - USE_LOCAL_NUGET_SOURCE=${USE_LOCAL_NUGET_SOURCE}
+      - NUGET_PKG_RESOLVED_BY_LOCAL_SOURCE=${NUGET_PKG_RESOLVED_BY_LOCAL_SOURCE}
+      - NUGET_PKG_PATH_RESOLVED_BY_LOCAL_SOURCE=${NUGET_PKG_PATH_RESOLVED_BY_LOCAL_SOURCE}
+      - BYPASS_ADVANCED_TEST=${BYPASS_ADVANCED_TEST}
     volumes:
+      # ==================
+      # Test Reports & Source Code
+      # ==================
       - ./reports/:/reports/
+      - ./src/TestToolProcess:/app/TestToolProcess
+      - ./src/container-run_test.sh:/app/container-run_test.sh
+
+      # ==================
+      # Platform Resources
+      # ==================
       - /etc/board:/etc/board
       - /usr/lib/Advantech/:/usr/lib/Advantech/:ro
-      - /lib/libSUSI-4.00.so:/lib/libSUSI-4.00.so:ro
-      - /lib/libSUSI-4.00.so.1:/lib/libSUSI-4.00.so.1:ro
-      - /lib/libSUSI-4.00.so.1.0.0:/lib/libSUSI-4.00.so.1.0.0:ro
+
+      # ==================
+      # JSON Support Libraries
+      # ==================
       - /lib/libjansson.a:/lib/libjansson.a:ro
       - /lib/libjansson.so:/lib/libjansson.so:ro
       - /lib/libjansson.so.4:/lib/libjansson.so.4:ro
       - /lib/libjansson.so.4.11.0:/lib/libjansson.so.4.11.0:ro
+
+      # ==================
+      # Susi Libraries (ARM SUSI SDK)
+      # ==================
+      - /lib/libSUSI-4.00.so:/lib/libSUSI-4.00.so:ro
+      - /lib/libSUSI-4.00.so.1:/lib/libSUSI-4.00.so.1:ro
+      - /lib/libSUSI-4.00.so.1.0.0:/lib/libSUSI-4.00.so.1.0.0:ro
       - /lib/libSusiIoT.so:/lib/libSusiIoT.so:ro
       - /lib/libSusiIoT.so.1.0.0:/lib/libSusiIoT.so.1.0.0:ro
